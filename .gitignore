@@ -10,3 +10,21 @@ node_modules/
 
 # OS
 .DS_Store
+
+# Submission / demo deliverables (kept local only, not published)
+SUBMISSION/
+demo_audio/
+docs/
+Assignment Voice AI bot.pdf
+
+# Binary media artifacts
+*.mp4
+*.mp3
+*.m4a
+*.wav
+*.webm
+*.png
+
+# Logs & scratch
+*.log
+/tmp/
