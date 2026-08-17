@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Whispers of the Wind — AI Voice Agent Demo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">WOW</span>
+      <div>
+        <h1>Whispers of the Wind</h1>
+        <p>AI Voice Agent · Divyasree Developers · Nandi Valley</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <a class="link" href="/api/v1/system-prompt.pdf" target="_blank">System Prompt (PDF)</a>
+      <a class="link" href="/docs" target="_blank">API Docs</a>
+      <span id="providerBadge" class="badge">…</span>
+    </div>
+  </header>
+
+  <main class="layout">
+    <section class="call-card">
+      <div class="call-header">
+        <div class="caller">
+          <div class="avatar" id="avatar">A</div>
+          <div>
+            <h2 id="callTitle">Meera — Property Consultant</h2>
+            <p id="callState">Ready to start a test call</p>
+          </div>
+        </div>
+        <div class="call-controls">
+          <button id="startBtn" class="btn btn-primary">Start call</button>
+          <button id="modeBtn" class="btn btn-ghost" title="Toggle voice / text">Voice: off</button>
+        </div>
+      </div>
+
+      <div class="transcript" id="transcript" aria-live="polite">
+        <div class="empty-state" id="emptyState">
+          <p>Press <strong>Start call</strong> to begin a simulated outbound call.</p>
+          <p class="hint">Voice mode uses Whisper speech recognition &amp; neural TTS (free) — falls back to your browser's speech tools when needed.</p>
+        </div>
+      </div>
+
+      <div class="composer">
+        <input
+          id="textInput"
+          type="text"
+          placeholder="Type your reply… (or switch on Voice)"
+          autocomplete="off"
+          disabled
+        />
+        <button id="sendBtn" class="btn btn-primary" disabled>Send</button>
+        <button id="micBtn" class="btn btn-mic" disabled title="Speak your reply (Whisper STT / browser speech)">🎙</button>
+      </div>
+      <div class="mic-status" id="micStatus"></div>
+    </section>
+
+    <aside class="side-panel">
+      <section class="panel">
+        <h3>Call flow</h3>
+        <ol class="flow" id="flow">
+          <li data-state="greeting">Introduction + permission</li>
+          <li data-state="intent">Intent (self-use / investment)</li>
+          <li data-state="geography">Geography (Nandi corridor)</li>
+          <li data-state="budget">Budget (₹92.4 lakh+)</li>
+          <li data-state="timeline">Timeline (Dec 2029)</li>
+          <li data-state="pitch">The Pitch</li>
+          <li data-state="cta">CTA — expert follow-up</li>
+        </ol>
+      </section>
+
+      <section class="panel">
+        <h3>Lead profile</h3>
+        <div class="lead" id="lead">
+          <p class="muted">No data yet</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h3>Project at a glance</h3>
+        <ul class="facts">
+          <li>207 villa plots · 1,200–4,000 sq.ft.</li>
+          <li>₹92.4 L – ₹3.08 Cr (incl. taxes)</li>
+          <li>74% open space · 20,000 sq.ft. clubhouse</li>
+          <li>20 min from KIA airport</li>
+          <li>Possession Dec 2029 · RERA registered</li>
+        </ul>
+      </section>
+    </aside>
+  </main>
+
+  <footer class="footer">
+    Assignment demo — outbound lead qualification bot for Divyasree's WOW project.
+    Runs on FastAPI · Groq free tier (LLM + Whisper) · neural TTS · offline fallback.
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+WOW voice agent - persona demo 2/5
+Rahul (adult male, 38, NRI in Singapore) - investment
+Automated browser demo (real UI, Playwright). Agent: Meera (Divyasree).
+
+MEERA (agent)  [greeting]
+  Good evening! This is Meera from Divyasree Developers, calling about Whispers of the Wind - premium villa plots near Nandi Hills, North Bengaluru. May I take two minutes of your time?
+
+RAHUL (caller)
+  Yes, you may speak.
+
+MEERA (agent)  [intent]
+  Perfect, thank you! So, are you considering this for your own weekend home, or as an investment?
+
+RAHUL (caller)
+  This is purely for investment. I want good long-term appreciation.
+
+MEERA (agent)  [geography]
+  Perfect, thank you. And are you comfortable with the Nandi Hills and Devanahalli corridor, about 20 minutes from the airport?
+
+RAHUL (caller)
+  Yes, the corridor works well for me. It's close to the new airport road.
+
+MEERA (agent)  [budget]
+  Understood. And may I ask - does a starting price of rupees 92.4 lakh, inclusive of taxes, fit within your budget?
+
+RAHUL (caller)
+  My budget is around 2.5 crore.
+
+MEERA (agent)  [timeline]
+  Just one more thing - possession is expected by December 2029, with phased delivery. Would that timeline work for you?
+
+RAHUL (caller)
+  2029 works well for an investment horizon.
+
+MEERA (agent)  [pitch]
+  Whispers of the Wind is more than a plot - it's a private valley where 74% of the 38 acres stays open: eco-parks, gardens and a 20,000 square feet clubhouse, all framed by the Nandi Hills - a like-minded community of discerning buyers. May I have one of our property experts call you to walk you through the available plots?
+
+RAHUL (caller)
+  Sounds good. Is the project RERA registered? And how is the developer's track record?
+
+MEERA (agent)  [pitch]
+  Yes, it is fully RERA-registered - registration number P R M K A R E R A 1 2 5 0 3 0 1 P R 0 7 0 5 2 5 0 0 7 7 1 8. Shall I have one of our property experts call you to walk through the available plots?
+
+RAHUL (caller)
+  Yes, please arrange a call for me.
+
+MEERA (agent)  [cta]
+  Of course! May I have your name and a phone number, and a good time to call - so our property expert can reach you?
+
+RAHUL (caller)
+  I'm Rahul Menon. You can reach me at 98765 43210, and evenings work best for me.
+
+MEERA (agent)
+  Thank you so much for your time - our property expert will be in touch. Have a wonderful day!
+

@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: wow-ai-voice-agent
+    runtime: python
+    plan: free
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: WHISPER_MODEL
+        value: whisper-large-v3
+      - key: TTS_VOICE_EN
+        value: en-IN-SwaraNeural
+      - key: TTS_VOICE_HI
+        value: hi-IN-SwaraNeural
+      - key: AGENT_NAME
+        value: Meera
+      - key: AGENT_ROLE
+        value: Divyasree property consultant

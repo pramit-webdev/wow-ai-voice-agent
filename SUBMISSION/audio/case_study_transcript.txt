@@ -1,0 +1,54 @@
+Case study - Sanjay Kumar (NRI, Dubai) - automated browser demo
+Rendered from the live UI transcript (Playwright).
+
+MEERA (agent)  [greeting]
+  Good evening! This is Meera from Divyasree Developers, calling about Whispers of the Wind - premium villa plots near Nandi Hills, North Bengaluru. May I take two minutes of your time?
+
+SANJAY (caller)
+  Yes please, go ahead.
+
+MEERA (agent)  [intent]
+  Perfect, thank you! So, are you considering this for your own weekend home, or as an investment?
+
+SANJAY (caller)
+  I'm looking for a weekend home, but also as an investment for the future.
+
+MEERA (agent)  [geography]
+  Perfect, thank you. And are you comfortable with the Nandi Hills and Devanahalli corridor, about 20 minutes from the airport?
+
+SANJAY (caller)
+  Yes, I know the Nandi Hills area well - my parents live in Devanahalli, so I'm very comfortable.
+
+MEERA (agent)  [budget]
+  Understood. And may I ask - does a starting price of Rs 92.4 lakh, inclusive of taxes, fit within your budget?
+
+SANJAY (caller)
+  Around 2.5 to 3 crore is fine with me.
+
+MEERA (agent)  [timeline]
+  Just one more thing - possession is expected by December 2029, with phased delivery. Would that timeline work for you?
+
+SANJAY (caller)
+  2029 is fine - I'm in no hurry since I'm based in Dubai.
+
+MEERA (agent)  [pitch]
+  Whispers of the Wind is more than a plot - it's a private valley where 74% of the 38 acres stays open: eco-parks, gardens and a 20,000 sq.ft. clubhouse, all framed by the Nandi Hills. May I have one of our property experts call you to walk you through the available plots?
+
+SANJAY (caller)
+  That sounds nice. What would the returns be like if I don't build immediately, and is the price negotiable?
+
+MEERA (agent)  [pitch]
+  Plots start at ₹92.4 lakh for a 1,200 sq.ft. plot and go up to ₹3.08 crore for a 4,000 sq.ft. plot — that's a tentative base rate of ₹7,700 per sq.ft., inclusive of taxes. Shall I have one of our property experts call you to walk through the available plots?
+
+SANJAY (caller)
+  Sounds good, go ahead.
+
+MEERA (agent)  [cta]
+  Of course! May I have your name and a phone number, and a good time to call - so our property expert can reach you?
+
+SANJAY (caller)
+  My name is Sanjay Kumar, you can reach me at 98111 22334, and evenings after 8 PM IST work best.
+
+MEERA (agent)
+  Thank you so much for your time - our property expert will be in touch. Have a wonderful day!
+
