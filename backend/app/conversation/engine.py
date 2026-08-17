@@ -10,7 +10,7 @@ from ..config import get_settings, llm_provider_active
 from ..llm.base import Provider, ProviderError
 from ..llm.fallback import FallbackProvider
 from ..llm.groq import GroqProvider
-from .prompt import build_system_prompt
+from .prompt import build_classification_prompt, build_system_prompt
 from .state import Classification, ConversationStateMachine
 
 log = logging.getLogger(__name__)
@@ -86,7 +86,7 @@ class ConversationEngine:
                 user_text=user_text,
                 history=self.history,
                 state=self.machine.state,
-                system_prompt=self.system_prompt,
+                system_prompt=build_classification_prompt(self.system_prompt),
             )
         )
         return result

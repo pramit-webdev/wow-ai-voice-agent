@@ -248,9 +248,48 @@ Rules for classification:
 
 
 def build_classification_prompt(system_prompt: str) -> str:
-    """System prompt for the classification-only LLM call."""
-    return (
-        system_prompt
-        + "\n\nFor this turn, you are ONLY classifying the caller's latest message. "
-        "Keep the JSON shape identical; reply can be empty."
-    )
+    """Lean system prompt for the classification-only LLM call.
+
+    The full system prompt (~3k tokens) is not needed to classify a single
+    message: the caller's intent, checkpoint answers and contact details can
+    be extracted with a short rule set. Keeping this call small roughly halves
+    per-turn token usage, which matters on free-tier rate limits.
+    """
+    return f"""You are a strict classifier for a premium outbound AI voice agent
+calling about the villa-plot project "Whispers of the Wind" (WOW) near Nandi
+Hills, Bangalore.
+
+The call flow: intro+permission -> intent -> geography -> budget -> timeline ->
+pitch -> CTA. Classification fields map to caller answers for those steps.
+
+Rules:
+- Set a field ONLY when the caller ACTUALLY answered it in this message.
+- permission_granted=true only on a clear "yes/okay/go ahead". A question from
+  the caller means permission_granted=null. If the caller answers a checkpoint
+  question early (intent, location comfort, budget or timeline) without first
+  granting permission, that counts as implicit permission: set
+  permission_granted=true as well.
+- intent=null unless they clearly state self-use, investment, or both.
+- stop_requested=true if the caller asks to end the call or says they are busy
+  now; irritated=true only on clear anger or frustration.
+- question_topic: short topic like "price", "size", "location", "possession",
+  "rera", "clubhouse", "openspace", "investment", "developer", "booking" when
+  the caller asks about the project.
+- Early answers: if the caller provides several checkpoint answers in one
+  message, set ALL of them.
+- Respond with JSON ONLY in this exact shape (do not wrap in fences):
+{{"reply": "", "classification": {{
+  "language": "en | hi | hinglish",
+  "permission_granted": true|false|null,
+  "intent": "self_use|investment|both|null",
+  "geography_comfortable": true|false|null,
+  "budget_fit": true|false|null,
+  "timeline_ok": true|false|null,
+  "stop_requested": true|false,
+  "irritated": true|false,
+  "question_topic": "short topic or null",
+  "contact_name": "name if provided, else null",
+  "contact_phone": "phone if provided, else null",
+  "preferred_time": "time if provided, else null"
+}}}}
+The full agent rules are: {system_prompt[:200]}... (not needed for classification)"""
