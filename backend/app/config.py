@@ -13,7 +13,7 @@ class Settings(BaseSettings):
     # LLM provider: "auto" (use Groq when key present, else fallback), "groq", "fallback"
     llm_provider: str = "auto"
     groq_api_key: str = ""
-    groq_model: str = "llama-3.3-70b-versatile"
+    groq_model: str = "openai/gpt-oss-120b"
     groq_base_url: str = "https://api.groq.com/openai/v1/chat/completions"
     groq_timeout_seconds: float = 15.0
     llm_temperature: float = 0.7

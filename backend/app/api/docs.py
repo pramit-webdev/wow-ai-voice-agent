@@ -109,7 +109,7 @@ def _build_pdf_bytes() -> bytes:
     story.append(
         Paragraph(
             "This is the complete system message used to configure the voice agent "
-            "(Groq, free tier, model llama-3.3-70b-versatile).",
+            "(Groq, free tier, model openai/gpt-oss-120b).",
             body,
         )
     )
