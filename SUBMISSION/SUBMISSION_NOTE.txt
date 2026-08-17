@@ -1,0 +1,46 @@
+SUBMISSION NOTE — WOW AI Voice Agent v1
+========================================
+
+PROJECT
+An outbound AI voice agent that makes cold calls for Divyasree Developers'
+"Whispers of the Wind" (WOW) premium villa-plot project near Nandi Hills,
+Bengaluru. It qualifies leads through a structured 4-checkpoint conversation
+(intent, geography, budget, timeline), delivers the Private Valley pitch and
+books a Property Expert follow-up.
+
+STACK (100% free)
+- Backend: Python FastAPI (backend/)
+- LLM + Speech-to-Text: Groq free tier (llama-free "openai/gpt-oss-120b" + Whisper)
+- TTS: neural edge-tts, automatic gTTS fallback
+- Resilience: deterministic offline fallback engine keeps every call working
+  even when the LLM is down or rate-limited
+- Frontend: hands-free web demo (silence-detection VAD - no mic clicks)
+
+LIVE DEMO
+https://wow-ai-voice-agent.onrender.com
+GitHub: https://github.com/pramit-webdev/wow-ai-voice-agent
+
+HOW TO RUN LOCALLY
+  cd backend
+  cp .env.example .env   (add your free GROQ_API_KEY)
+  pip install -r requirements.txt
+  uvicorn app.main:app --port 8000
+  open http://localhost:8000  (press "Start call" and just speak)
+
+KEY FEATURES
+- Cold-call etiquette: humble, non-pushy, easy to decline, never re-asks
+- Conversation architecture: permission -> 4 checkpoints -> pitch -> CTA
+- Multilingual (English/Hindi/Hinglish), spoken-text formatting for TTS
+- Hands-free voice loop: agent speaks, mic auto-listens, pauses auto-send
+
+DELIVERABLES (SUBMISSION/ folder)
+- demo_videos/ : 5 persona demo calls (MP4 + transcripts) - weekend home,
+  NRI investment, retirement, first plot, budget-close
+- audio/       : call recordings + case-study and flow audio
+- docs/        : WOW_AI_Voice_Agent_System_Prompt.pdf (full system prompt)
+
+VERIFICATION
+- 108 automated tests pass (prompt, knowledge base, conversation, fallback)
+- End-to-end browser tests (Playwright) prove the hands-free loop exchanges
+  turns with zero mic clicks - verified locally and on the live deployment
+- Full qualification journey verified live: groq LLM + whisper STT + TTS
