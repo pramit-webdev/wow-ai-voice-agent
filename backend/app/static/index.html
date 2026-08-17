@@ -34,14 +34,14 @@
         </div>
         <div class="call-controls">
           <button id="startBtn" class="btn btn-primary">Start call</button>
-          <button id="modeBtn" class="btn btn-ghost" title="Toggle voice / text">Voice: off</button>
+          <button id="modeBtn" class="btn btn-ghost" title="Toggle hands-free voice / text">Voice: on</button>
         </div>
       </div>
 
       <div class="transcript" id="transcript" aria-live="polite">
         <div class="empty-state" id="emptyState">
           <p>Press <strong>Start call</strong> to begin a simulated outbound call.</p>
-          <p class="hint">Voice mode uses Whisper speech recognition &amp; neural TTS (free) — falls back to your browser's speech tools when needed.</p>
+          <p class="hint">Hands-free voice: after Meera speaks, just talk — she listens automatically and responds when you pause. No mic clicks needed.</p>
         </div>
       </div>
 
@@ -54,7 +54,7 @@
           disabled
         />
         <button id="sendBtn" class="btn btn-primary" disabled>Send</button>
-        <button id="micBtn" class="btn btn-mic" disabled title="Speak your reply (Whisper STT / browser speech)">🎙</button>
+        <button id="micBtn" class="btn btn-mic" disabled title="Tap to talk — or just speak (hands-free)">🎙</button>
       </div>
       <div class="mic-status" id="micStatus"></div>
     </section>

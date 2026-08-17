@@ -1,6 +1,10 @@
 /* WOW AI Voice Agent demo frontend.
    Voice uses the free Web Speech API (browser speech recognition + synthesis);
-   text mode works everywhere, including automated E2E tests. */
+   text mode works everywhere, including automated E2E tests.
+   Voice mode is HANDS-FREE: after the agent finishes speaking it listens
+   automatically, detects when you stop talking (silence detection) and sends
+   what you said — no mic clicks needed. The 🎙 button is only a manual
+   override (tap to stop listening, tap to start). */
 
 const $ = (id) => document.getElementById(id);
 
@@ -15,7 +19,17 @@ const state = {
   mediaRecorder: null,
   mediaStream: null,
   mediaChunks: [],
-  recTimeout: null,
+  vad: null,
+};
+
+/* Silence-based voice activity detection (hands-free turn taking).
+   The user just speaks; when they pause ~1.2s the recording auto-sends. */
+const VAD = {
+  speechThreshold: 0.02,  // RMS level that counts as speech
+  minSpeechMs: 250,       // must sustain speech this long (ignore clicks)
+  silenceMs: 1200,        // pause length that ends the utterance
+  maxSpeechMs: 30000,     // hard cap while continuously talking
+  maxIdleMs: 25000,       // no speech at all -> cancel and re-listen
 };
 
 const els = {
@@ -80,19 +94,19 @@ async function sendMessage(text) {
       els.callState.textContent = "Call ended — " + (turn.closed_reason || "closed");
       els.startBtn.disabled = false;
       els.micBtn.disabled = true;
-      state.awaitingReply = false;
+      state.started = false;
       return;
     }
     els.callState.textContent = turn.state === "done"
       ? "Call completed — follow-up scheduled"
       : "Call in progress…";
     await speak(turn.reply, turn.reply_language);
-    if (state.voiceOn) await listenOnce();
   } catch (err) {
     typing.remove();
     appendMsg("agent", "⚠ Demo error: " + err.message);
   } finally {
     state.awaitingReply = false;
+    if (state.voiceOn && state.started && !state.listening) listenOnce();
   }
 }
 
@@ -260,10 +274,65 @@ function makeRecognition() {
   return rec;
 }
 
+/* Silence detection on the mic stream: resolves {heard:true} when the user
+   pauses after speaking, {heard:false} if nothing was said within maxIdleMs. */
+function startVAD(stream) {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const analyser = ctx.createAnalyser();
+  analyser.fftSize = 1024;
+  ctx.createMediaStreamSource(stream).connect(analyser);
+  const data = new Float32Array(analyser.fftSize);
+  const startedAt = performance.now();
+  let speechStarted = false;
+  let speechSince = 0;
+  let silenceSince = 0;
+  let done = false;
+
+  function rms() {
+    analyser.getFloatTimeDomainData(data);
+    let sum = 0;
+    for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+    return Math.sqrt(sum / data.length);
+  }
+
+  return new Promise((resolve) => {
+    (function loop() {
+      if (done) return;
+      const level = rms();
+      const now = performance.now();
+      if (level > VAD.speechThreshold) {
+        if (!speechStarted) {
+          speechStarted = true;
+          speechSince = now;
+        } else if (now - speechSince > VAD.minSpeechMs) {
+          silenceSince = 0;
+        }
+      } else if (speechStarted && now - speechSince > VAD.minSpeechMs) {
+        if (!silenceSince) silenceSince = now;
+        else if (now - silenceSince > VAD.silenceMs) {
+          done = true;
+          return resolve({ heard: true });
+        }
+      }
+      if (speechStarted && now - startedAt > VAD.maxSpeechMs) {
+        done = true;
+        return resolve({ heard: true });
+      }
+      if (!speechStarted && now - startedAt > VAD.maxIdleMs) {
+        done = true;
+        return resolve({ heard: false });
+      }
+      requestAnimationFrame(loop);
+    })();
+  }).finally(() => {
+    try { ctx.close(); } catch (_) {}
+  });
+}
+
 function serverSTT() {
   return new Promise((resolve) => {
     navigator.mediaDevices.getUserMedia({ audio: true })
-      .then((stream) => {
+      .then(async (stream) => {
         state.mediaStream = stream;
         const mr = new MediaRecorder(stream, { mimeType: "audio/webm;codecs=opus" });
         state.mediaRecorder = mr;
@@ -274,11 +343,12 @@ function serverSTT() {
           state.mediaStream = null;
           state.mediaRecorder = null;
           const blob = new Blob(state.mediaChunks, { type: "audio/webm" });
+          const heard = !!(state.vadHeard && blob.size > 1000);
           state.listening = false;
           els.micBtn.classList.remove("live");
           els.micBtn.textContent = "🎙";
           els.micStatus.classList.remove("live");
-          if (blob.size > 1000) {
+          if (heard) {
             const fd = new FormData();
             fd.append("file", blob, "caller.webm");
             try {
@@ -288,27 +358,30 @@ function serverSTT() {
                 els.micStatus.textContent = "";
                 sendMessage(data.text.trim());
               } else {
-                els.micStatus.textContent = "Nothing heard — please try again.";
+                els.micStatus.textContent = "Nothing heard — listening again…";
+                setTimeout(listenOnce, 700);
               }
             } catch (_) {
               els.micStatus.textContent = "Speech service unavailable — use text mode.";
             }
           } else {
-            els.micStatus.textContent = "Nothing heard — please try again.";
+            els.micStatus.textContent = "Nothing heard — listening again…";
+            setTimeout(listenOnce, 700);
           }
           resolve();
         };
         mr.start();
         state.listening = true;
+        state.vadHeard = false;
         els.micBtn.classList.add("live");
         els.micBtn.textContent = "🔴";
         els.micStatus.classList.add("live");
-        els.micStatus.textContent = "Listening… (click 🎙 to stop)";
-        state.recTimeout = setTimeout(() => {
-          if (state.mediaRecorder && state.mediaRecorder.state === "recording") {
-            state.mediaRecorder.stop();
-          }
-        }, 8000);
+        els.micStatus.textContent = "Listening… just speak (hands-free)";
+        const verdict = await startVAD(stream);
+        state.vadHeard = verdict.heard;
+        if (state.mediaRecorder && state.mediaRecorder.state === "recording") {
+          state.mediaRecorder.stop();
+        }
       })
       .catch(() => {
         els.micStatus.textContent = "Microphone unavailable — use text mode.";
@@ -325,7 +398,7 @@ function startListening() {
   } else {
     els.micBtn.classList.add("live");
     els.micBtn.textContent = "🔴";
-    els.micStatus.textContent = "Listening…";
+    els.micStatus.textContent = "Listening… just speak (hands-free)";
     state.lastTranscript = "";
     if (state.recognition) {
       try { state.recognition.stop(); } catch (_) {}
@@ -351,7 +424,7 @@ function stopListening() {
 }
 
 async function listenOnce() {
-  if (state.awaitingReply) return;
+  if (state.awaitingReply || state.listening) return;
   startListening();
 }
 
@@ -365,6 +438,8 @@ function toggleVoice() {
     state.voiceOn = false;
     els.modeBtn.textContent = "Voice: unsupported";
     els.micStatus.textContent = "Speech recognition not supported in this browser — use text mode.";
+  } else if (state.started && !state.awaitingReply && !state.listening) {
+    listenOnce();
   }
 }
 
@@ -394,9 +469,13 @@ fetch("/health")
   .then((h) => {
     setProvider(h.provider);
     caps = h.capabilities || caps;
-    if (caps.tts && !state.voiceOn) {
-      els.micStatus.textContent = "Voice ready: " +
-        (caps.stt ? "Whisper STT + neural TTS" : "neural TTS") + " — press Voice: on to speak.";
+    if (speechAvailable()) {
+      state.voiceOn = true;
+      els.modeBtn.textContent = "Voice: on";
+    }
+    if (caps.tts) {
+      els.micStatus.textContent = "Hands-free voice ready — just speak, no mic clicks." +
+        (caps.stt ? " (Whisper STT + neural TTS)" : "");
     }
   })
   .catch(() => setProvider("offline"));
